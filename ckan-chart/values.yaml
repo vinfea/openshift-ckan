@@ -1,0 +1,97 @@
+# Default values for this chart
+
+# Global Values -- applied to pods of all components
+resources:
+  requests:
+    cpu: "250m"
+    memory: "512Mi"
+  limits:
+    cpu: "500m"
+    memory: "1Gi"
+
+# ckan-base
+ckan:
+  deployment:
+    replicas: 1 # Only tested with replicas: 1
+    image: "quay-quay-openshift-operators.apps.edcm-science-ocp-ops1.science.gc.ca/aafc-labs-can/ckan-openshift:1.0.0"
+  
+  pvc:
+    storage: "5Gi"
+
+  env:
+    # Host Ports
+    CKAN_PORT_HOST: "5000"
+
+    # CKAN Databases
+    POSTGRES_HOST: "ckan-db-primary"
+
+    # Dev Settings
+    USE_HTTPS_FOR_DEV: "false"
+
+    # CKAN Core
+    CKAN_VERSION: "2.11.3"
+    CKAN_SITE_ID: "default"
+    CKAN_SITE_URL: "https://change-me-to-your-route"
+    CKAN___BEAKER__SESSION__SECRET: "CHANGE_ME"
+    CKAN___API_TOKEN__JWT__ENCODE__SECRET: "string:CHANGE_ME"
+    CKAN___API_TOKEN__JWT__DECODE__SECRET: "string:CHANGE_ME"
+    CKAN_SYSADMIN_EMAIL: "your_email@example.com"
+    CKAN_STORAGE_PATH: "/var/lib/ckan"
+    CKAN_MAX_UPLOAD_SIZE_MB: "100"
+    TZ: "UTC"
+
+    # Solr
+    SOLR_IMAGE_VERSION: "2.10-solr9"
+    CKAN_SOLR_URL: "http://ckan-solr:8983/solr/ckan"
+    TEST_CKAN_SOLR_URL: "http://ckan-solr:8983/solr/ckan"
+
+    # Redis
+    REDIS_VERSION: "6"
+    CKAN_REDIS_URL: "redis://ckan-redis:6379/1"
+    TEST_CKAN_REDIS_URL: "redis://ckan-redis:6379/1"
+
+    # Extensions
+    CKAN__PLUGINS: "image_view text_view datatables_view xloader datastore envvars"
+    CKAN__HARVEST__MQ__TYPE: "redis"
+    CKAN__HARVEST__MQ__HOSTNAME: "ckan-redis"
+    CKAN__HARVEST__MQ__PORT: "6379"
+    CKAN__HARVEST__MQ__REDIS_DB: "1"
+
+    # SSL CA Bundles
+    REQUESTS_CA_BUNDLE: "/srv/app/ca-certs/ca-bundle.crt"
+    CURL_CA_BUNDLE: "/srv/app/ca-certs/ca-bundle.crt"
+
+# ckan-worker
+ckan-worker:
+  deployment:
+    replicas: 1 # Only tested with replicas: 1
+    image: "quay-quay-openshift-operators.apps.edcm-science-ocp-ops1.science.gc.ca/aafc-labs-can/ckan-openshift:1.0.0"
+
+  env:
+  # The config map ckan-worker-config.yaml will ingest the env vars
+  # for ckan-base set above (at ckan.env), as well as the two additional
+  # (worker specific) env vars set below
+
+  # CKAN Worker
+  CKAN_WORKER: "true"
+  CKAN_WORKER_OPTS: "default"
+
+# PostgresCluster
+postgres:
+  postgresVersion: 16 # Only tested with postgresVersion: 16
+  replicas: 2
+  storage: "5Gi"
+  backup-storage: "5Gi"
+
+redis:
+  deployment:
+    replicas: 1 # Only tested with replicas: 1
+    image: redis:6 # Only tested with image: redis:6
+
+solr:
+  deployment:
+    replicas: 1 # Only tested with replicas: 1
+    image: ckan/ckan-solr:2.10-solr9 # Only tested with ckan/ckan-solr:2.10-solr9
+  
+  pvc:
+    storage: "3Gi"

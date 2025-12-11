@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ckan-config
+data:
+  {{- range $key, $value := .Values.ckan.env }}
+  {{ $key }}: "{{ $value }}"
+  {{- end }}
+  

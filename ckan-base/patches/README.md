@@ -1,0 +1,1 @@
+Patches included in this directory are applied by the final RUN directive in the Dockerfile.

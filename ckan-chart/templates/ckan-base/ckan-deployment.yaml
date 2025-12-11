@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ckan
+spec:
+  replicas: {{ .Values.ckan.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: ckan
+  template:
+    metadata:
+      labels:
+        app: ckan
+    spec:
+      initContainers:      
+        # Wait for Postgres
+        - name: wait-for-postgres
+          image: postgres:16-alpine
+          env:
+            - name: POSTGRES_USER
+              value: "ckandbuser"
+            - name: POSTGRES_DB
+              value: "ckandb"
+            - name: POSTGRES_HOST
+              value: "ckan-db-primary"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for Postgres..."
+              until pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB" -h "$POSTGRES_HOST"; do
+                sleep 2
+              done
+              echo "Postgres is ready!"
+
+        # Wait for Solr
+        - name: wait-for-solr
+          image: busybox:1.36
+          env:
+            - name: SOLR_HOST
+              value: "ckan-solr"       # Kubernetes service name
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for Solr..."
+              until wget -qO /dev/null "http://$SOLR_HOST:8983/solr/"; do
+                sleep 2
+              done
+              echo "Solr is ready!"
+
+        # Wait for Redis
+        - name: wait-for-redis
+          image: redis:6
+          env:
+            - name: REDIS_HOST
+              value: "ckan-redis"      # Kubernetes service name
+            - name: REDIS_PORT
+              value: "6379"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for Redis..."
+              until redis-cli -h "$REDIS_HOST" -p "$REDIS_PORT" -e "QUIT"; do
+                sleep 2
+              done
+              echo "Redis is ready!"
+
+      containers:
+        - name: ckan
+          image: {{ .Values.ckan.deployment.image }}
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: ckan-config
+            - secretRef:
+                name: ckan-secret
+          volumeMounts:
+            - name: ckan-storage
+              mountPath: /var/lib/ckan
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: ckan-storage
+          persistentVolumeClaim:
+            claimName: ckan-storage
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ckan
+  labels:
+    app: ckan
+spec:
+  ports:
+    - name: http
+      port: 5000          # The port the service exposes internally
+      targetPort: 5000    # Must match the CKAN container port
+  selector:
+    app: ckan

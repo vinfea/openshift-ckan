@@ -1,0 +1,10 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: ckan
+spec:
+  to:
+    kind: Service
+    name: ckan
+  tls:
+    termination: edge

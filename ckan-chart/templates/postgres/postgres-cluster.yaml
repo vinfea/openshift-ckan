@@ -1,0 +1,41 @@
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  # Name of postgres cluster
+  name: ckan-db
+spec:
+  # The official ckan-docker implementation uses postgres:16-alpine
+  postgresVersion: {{ .Values.postgres.postgresVersion }}
+  instances:
+    - name: instance1
+      replicas: {{ .Values.postgres.replicas }}
+      resources:
+        {{- toYaml .Values.resources | nindent 12 }}
+      dataVolumeClaimSpec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.postgres.storage }}
+  users:
+    - name: ckandbuser
+      databases:
+        - ckandb
+        - datastore
+        - ckan_test
+        - datastore_test
+      options: "CREATEDB CREATEROLE"
+    - name: datastore
+  databaseInitSQL:
+    key: init.sql
+    name: ckan-init-sql
+
+  backups:
+    pgbackrest:
+      repos:
+        - name: repo1
+          volume:
+            volumeClaimSpec:
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: {{ .Values.postgres.backup-storage }}

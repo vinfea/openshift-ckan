@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ckan-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.ckan.pvc.storage }}
+  # storageClassName can be omitted to use the default StorageClass
+  # of the OpenShift sandbox
