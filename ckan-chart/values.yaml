@@ -31,7 +31,7 @@ ckan:
     # CKAN Core
     CKAN_VERSION: "2.11.3"
     CKAN_SITE_ID: "default"
-    CKAN_SITE_URL: "https://change-me-to-your-route"
+    CKAN_SITE_URL: "https://ckan-aafc-labs-can-dev.apps.edcm-science-ocp-ops1.science.gc.ca"
     CKAN___BEAKER__SESSION__SECRET: "CHANGE_ME"
     CKAN___API_TOKEN__JWT__ENCODE__SECRET: "string:CHANGE_ME"
     CKAN___API_TOKEN__JWT__DECODE__SECRET: "string:CHANGE_ME"
