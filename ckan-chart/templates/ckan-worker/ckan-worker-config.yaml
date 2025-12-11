@@ -9,7 +9,7 @@ data:
   {{- end }}
 
   {{- /* Second: include all CKAN worker-specific env vars */}}
-  {{- range $key, $value := .Values.ckan-worker.env }}
+  {{- range $key, $value := .Values.ckan_worker.env }}
   {{ $key }}: {{ $value | quote }}
   {{- end }}
   

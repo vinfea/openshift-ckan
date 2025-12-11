@@ -38,4 +38,4 @@ spec:
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
-                  storage: {{ .Values.postgres.backup-storage }}
+                  storage: {{ .Values.postgres.backup_storage }}

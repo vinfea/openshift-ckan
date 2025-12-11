@@ -62,7 +62,7 @@ ckan:
     CURL_CA_BUNDLE: "/srv/app/ca-certs/ca-bundle.crt"
 
 # ckan-worker
-ckan-worker:
+ckan_worker:
   deployment:
     replicas: 1 # Only tested with replicas: 1
     image: "quay-quay-openshift-operators.apps.edcm-science-ocp-ops1.science.gc.ca/aafc-labs-can/ckan-openshift:1.0.0"
@@ -81,7 +81,7 @@ postgres:
   postgresVersion: 16 # Only tested with postgresVersion: 16
   replicas: 2
   storage: "5Gi"
-  backup-storage: "5Gi"
+  backup_storage: "5Gi"
 
 redis:
   deployment:

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: ckan-worker
 spec:
-  replicas: {{ .Values.ckan-worker.deployment.replicas }}
+  replicas: {{ .Values.ckan_worker.deployment.replicas }}
   selector:
     matchLabels:
       app: ckan-worker
@@ -69,7 +69,7 @@ spec:
 
       containers:
       - name: ckan-worker
-        image: {{ .Values.ckan-worker.deployment.image }}
+        image: {{ .Values.ckan_worker.deployment.image }}
         envFrom:
         - configMapRef:
             name: ckan-worker-config
