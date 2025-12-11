@@ -1,0 +1,3 @@
+helm install ckan ./ckan-helm
+
+helm uninstall ckan -n aafc-labs-can-dev

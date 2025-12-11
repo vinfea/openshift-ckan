@@ -68,13 +68,13 @@ ckan_worker:
     image: "quay-quay-openshift-operators.apps.edcm-science-ocp-ops1.science.gc.ca/aafc-labs-can/ckan-openshift:1.0.0"
 
   env:
-  # The config map ckan-worker-config.yaml will ingest the env vars
-  # for ckan-base set above (at ckan.env), as well as the two additional
-  # (worker specific) env vars set below
+    # The config map ckan-worker-config.yaml will ingest the env vars
+    # for ckan-base set above (at ckan.env), as well as the two additional
+    # (worker specific) env vars set below
 
-  # CKAN Worker
-  CKAN_WORKER: "true"
-  CKAN_WORKER_OPTS: "default"
+    # CKAN Worker
+    CKAN_WORKER: "true"
+    CKAN_WORKER_OPTS: "default"
 
 # PostgresCluster
 postgres:
